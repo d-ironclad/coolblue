@@ -1,2 +1,2 @@
 # coolblue
-Test task for coolblur
+Test task for coolblue
