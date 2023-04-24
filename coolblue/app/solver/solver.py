@@ -8,19 +8,18 @@ from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 
 
-def create_data_model(coordinates):
-    """Stores the data for the problem."""
+def create_distance_matrix(coordinates):
+    """Creates distance matrix from list of coordinates"""
     data = []
-
+    # TODO actual distance
     for point in coordinates:
         data.append(
             [math.dist((point['lat'], point['lon']), (x['lat'], x['lon'])) for x in coordinates]
         )
-    print(data)
     return data
 
 
-def solve(distance_matrix, num_vehicles, depot, max_distance):
+def solve(distance_matrix: list,  max_distance: int, num_vehicles: int=1, depot: int=0):
     # Create the routing index manager.
     manager = pywrapcp.RoutingIndexManager(len(distance_matrix), num_vehicles, depot)
 

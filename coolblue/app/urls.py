@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from vrp.api.urls import router as solve_router
+from coolblue.app.api.urls import router as solve_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),

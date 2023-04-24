@@ -8,6 +8,8 @@ django = "==4.2"
 ortools = "*"
 djangorestframework = "*"
 markdown = "*"
+redis = "*"
+celery = {extras = ["redis"], version = "*"}
 
 [dev-packages]
 pytest = "*"
