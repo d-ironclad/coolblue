@@ -8,8 +8,10 @@ django = "==4.2"
 ortools = "*"
 djangorestframework = "*"
 markdown = "*"
-redis = "*"
 celery = {extras = ["redis"], version = "*"}
+redis = {extras = ["hiredis"], version = "*"}
+drf-spectacular = "*"
+importlib-metadata = "==4.13.0"
 
 [dev-packages]
 pytest = "*"

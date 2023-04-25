@@ -1,11 +1,13 @@
 """
     Simple Vehicles Routing Problem (VRP).
-    Uses this GoogleOR-Tools tutorial:
+    Uses this Google OR-Tools tutorial:
     https://developers.google.com/optimization/routing/vrp
 """
-import math
-from ortools.constraint_solver import routing_enums_pb2
-from ortools.constraint_solver import pywrapcp
+
+
+from ortools.constraint_solver import pywrapcp, routing_enums_pb2
+
+from solver_api.utils import calculate_distance
 
 
 def create_distance_matrix(coordinates):
@@ -14,12 +16,18 @@ def create_distance_matrix(coordinates):
     # TODO actual distance
     for point in coordinates:
         data.append(
-            [math.dist((point['lat'], point['lon']), (x['lat'], x['lon'])) for x in coordinates]
+            [
+                calculate_distance(point, x)
+                for x in coordinates
+            ]
         )
     return data
 
 
-def solve(distance_matrix: list,  max_distance: int, num_vehicles: int=1, depot: int=0):
+def solve(
+    distance_matrix: list, max_distance: int, num_vehicles: int = 1, depot: int = 0
+):
+    """Returns Vehicle Routing Problem solution"""
     # Create the routing index manager.
     manager = pywrapcp.RoutingIndexManager(len(distance_matrix), num_vehicles, depot)
 
@@ -40,23 +48,24 @@ def solve(distance_matrix: list,  max_distance: int, num_vehicles: int=1, depot:
     routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
 
     # Add Distance constraint.
-    dimension_name = 'Distance'
+    dimension_name = "Distance"
     routing.AddDimension(
         transit_callback_index,
         0,  # no slack
         max_distance,  # vehicle maximum travel distance
         True,  # start cumul to zero
-        dimension_name)
+        dimension_name,
+    )
     distance_dimension = routing.GetDimensionOrDie(dimension_name)
     distance_dimension.SetGlobalSpanCostCoefficient(100)
 
     # Setting first solution heuristic.
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (
-        routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
+        routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
+    )
 
     # Solve the problem.
     solution = routing.SolveWithParameters(search_parameters)
     # TODO solution format
     return solution
-

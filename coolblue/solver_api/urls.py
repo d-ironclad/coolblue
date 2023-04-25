@@ -16,11 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-from coolblue.app.api.urls import router as solve_router
+from solver_api.api.urls import router as solve_router
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('rest_framework.urls')),
-    path('', include(solve_router.urls)),
+    path("admin/", admin.site.urls),
+    path("api/", include("rest_framework.urls")),
+    path("api/", include(solve_router.urls)),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]
