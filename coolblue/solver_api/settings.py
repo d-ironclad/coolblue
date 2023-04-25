@@ -128,6 +128,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Drf config
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -158,3 +162,4 @@ CELERY_BROKER_URL = (
     f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST}:{RABBITMQ_PORT}//"
 )
 CELERY__TASK_DEFAULT_QUEUE = "vrp_solver"
+CELERY_RESULT_EXPIRES = os.environ.get('RESULT_LIFETIME', 3600)

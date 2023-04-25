@@ -14,4 +14,4 @@ def task_solve_problem(self, user_id, data):
         depot=data["depot"],
         max_distance=data["max_distance"],
     )
-    return {"result": "result"}
+    return solution

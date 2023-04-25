@@ -18,12 +18,18 @@ from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-from solver_api.api.urls import router as solve_router
+from solver_api.api.solver.urls import router as solve_router
+from solver_api.api.users.urls import router as user_router
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("rest_framework.urls")),
     path("api/", include(solve_router.urls)),
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path("api/", include(user_router.urls)),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "api/schema/swagger-ui/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
 ]

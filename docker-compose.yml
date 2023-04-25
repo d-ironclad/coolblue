@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+
+  web:
+    build: .
+    platform: linux/amd64
+    command: bash -c "gunicorn solver_api.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4"
+    environment:
+     - REDIS_HOST=redis
+     - RABBITMQ_HOST=rabbitmq
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+      - redis
+    networks:
+      - backend
+
+  celery_worker:
+    build: .
+    platform: linux/amd64
+    command: bash -c "celery -A solver_api.celery_app:app worker --loglevel=info -Q vrp_solver"
+    environment:
+     - REDIS_HOST=redis
+     - RABBITMQ_HOST=rabbitmq
+    volumes:
+      - .:/app
+    depends_on:
+      - rabbitmq
+      - redis
+    networks:
+      - backend
+
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:3.11-management
+    volumes:
+      - ./config/rabbitmq/rabbit.conf:/etc/rabbit/rabbit.conf
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    depends_on:
+      - redis
+    networks:
+      - backend
+
+  redis:
+    hostname: redis
+    restart: unless-stopped
+    image: redis:7.0.11-alpine
+    expose:
+        - 6379
+
+
+networks:
+  backend:
