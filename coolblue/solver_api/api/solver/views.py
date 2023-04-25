@@ -14,11 +14,11 @@ from ...celery_app import app as celery_app
 from ...solver.tasks import task_solve_problem
 
 
-from .serializers import ProblemSerialiser, SolutionSerializer
+from .serializers import ProblemResponseSerializer, ProblemSerializer, SolutionSerializer
 
 logger = logging.getLogger(__name__)
 
-@extend_schema(request=ProblemSerialiser)
+@extend_schema(request=ProblemSerializer, responses=ProblemResponseSerializer)
 class SolverViewset(ViewSet):
     """Viewset for posting problem and receiving result"""
 
@@ -27,15 +27,16 @@ class SolverViewset(ViewSet):
 
     def create(self, request):
         """Launches calculation task with given parameters, returns task id for retrieving"""
-        serializer = ProblemSerialiser(data=request.data)
+        serializer = ProblemSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
+            # user id added to task id to separate results
             task_id = str(uuid.uuid4())
             task_solve_problem.apply_async(
                 kwargs={"user_id": request.user.id, "data": data}, queue="vrp_solver",
                 task_id=":".join((str(request.user.id), task_id))
             )
-            return Response(task_id)
+            return Response(status=201, data={'task_id': task_id})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -2,7 +2,9 @@
 from django.contrib.auth import get_user_model
 from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication)
 
 from .serializers import UserSerializer
 
@@ -12,6 +14,8 @@ class UserViewSet(mixins.CreateModelMixin,
                   mixins.RetrieveModelMixin,
                   GenericViewSet):
     """CRUD viewset for User"""
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = get_user_model().objects
     serializer_class = UserSerializer
 

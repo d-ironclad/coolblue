@@ -24,27 +24,7 @@ def create_distance_matrix(coordinates):
 
 def format_solution(solution, num_vehicles, routing, manager):
     """Returns solution as dict"""
-    logger.info(f"Objective: {solution.ObjectiveValue()}")
-    max_route_distance = 0
-    for vehicle_id in range(num_vehicles):
-        index = routing.Start(vehicle_id)
-        plan_output = "Route for vehicle {}:\n".format(vehicle_id)
-        route_distance = 0
-        while not routing.IsEnd(index):
-            plan_output += " {} -> ".format(manager.IndexToNode(index))
-            previous_index = index
-            index = solution.Value(routing.NextVar(index))
-            route_distance += routing.GetArcCostForVehicle(
-                previous_index, index, vehicle_id
-            )
-        plan_output += "{}\n".format(manager.IndexToNode(index))
-        plan_output += "Distance of the route: {}m\n".format(route_distance)
-        logger.info(plan_output)
-        max_route_distance = max(route_distance, max_route_distance)
-    logger.info("Maximum of the route distances: {}m".format(max_route_distance))
-
     result = {"objective": solution.ObjectiveValue(), 'vehicles': {}}
-    max_route_distance = 0
     for vehicle_id in range(num_vehicles):
         route = result['vehicles'].setdefault(vehicle_id, {"route": [], "distance": 0})
         index = routing.Start(vehicle_id)
