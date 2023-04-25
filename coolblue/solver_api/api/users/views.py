@@ -19,5 +19,6 @@ class UserViewSet(mixins.CreateModelMixin,
     def get_permissions(self):
         if self.action == "create":
             self.permission_classes = (AllowAny,)
+            self.authentication_classes = []
 
         return super(UserViewSet, self).get_permissions()

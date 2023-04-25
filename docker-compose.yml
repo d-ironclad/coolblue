@@ -1,19 +1,32 @@
 version: "3"
 
 services:
+  db:
+    hostname: db
+    image: postgres:12
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=coolblue
+      - POSTGRES_PASSWORD=coolblue
+      - POSTGRES_DB=coolblue
+    networks:
+      - backend
 
   web:
     build: .
     platform: linux/amd64
-    command: bash -c "gunicorn solver_api.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4"
+    command: bash -c "python manage.py migrate && gunicorn solver_api.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4"
     environment:
      - REDIS_HOST=redis
      - RABBITMQ_HOST=rabbitmq
+     - DB_HOST=db
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     depends_on:
+      - db
       - rabbitmq
       - redis
     networks:
@@ -26,9 +39,11 @@ services:
     environment:
      - REDIS_HOST=redis
      - RABBITMQ_HOST=rabbitmq
+     - DB_HOST=db
     volumes:
       - .:/app
     depends_on:
+      - db
       - rabbitmq
       - redis
     networks:
@@ -51,8 +66,10 @@ services:
     hostname: redis
     restart: unless-stopped
     image: redis:7.0.11-alpine
-    expose:
-        - 6379
+    ports:
+        - "6379:6379"
+    networks:
+      - backend
 
 
 networks:

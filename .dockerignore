@@ -6,3 +6,4 @@ README.md
 .vscode
 **.DS_Store
 **/*.pyc
+db.sqlite3
