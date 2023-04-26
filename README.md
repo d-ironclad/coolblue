@@ -14,7 +14,30 @@ API documentation available at http://localhost:8000/api/schema/swagger-ui
 
 Problem example for _/api/solve_
 ```json
-./example.sh
+{
+    "coordinates": [
+        {"lat":456, "lon": 320}, 
+        {"lat":228, "lon": 0},    
+        {"lat":912, "lon": 0},    
+        {"lat":0, "lon": 80},     
+        {"lat":114, "lon": 80},   
+        {"lat":570, "lon": 160},  
+        {"lat":798, "lon": 160},  
+        {"lat":342, "lon": 240},  
+        {"lat":684, "lon": 240},  
+        {"lat":570, "lon": 400},  
+        {"lat":912, "lon": 400},  
+        {"lat":114, "lon": 480},  
+        {"lat":228, "lon": 480},  
+        {"lat":342, "lon": 560},  
+        {"lat":684, "lon": 560},  
+        {"lat":0, "lon": 640},    
+        {"lat":798, "lon": 640}
+    ],
+    "num_vehicles": 4,
+    "depot": 0,
+    "max_distance": 3000
+}
 ```
 
 ## Design
