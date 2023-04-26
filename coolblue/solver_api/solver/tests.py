@@ -2,6 +2,7 @@ import pytest
 
 from . import solver
 
+
 @pytest.fixture
 def problem():
     return {
@@ -29,26 +30,26 @@ def problem():
         "max_distance": 3000,
     }
 
+
 class TestSolver:
     def test_solver_success(self, problem):
         distance_matrix = solver.create_distance_matrix(problem["coordinates"])
         solution = solver.solve(
-        distance_matrix=distance_matrix,
-        num_vehicles=problem["num_vehicles"],
-        depot=problem["depot"],
-        max_distance=problem["max_distance"],
-    )
+            distance_matrix=distance_matrix,
+            num_vehicles=problem["num_vehicles"],
+            depot=problem["depot"],
+            max_distance=problem["max_distance"],
+        )
         assert solution["objective"] == 125115
-        assert solution["vehicles"][0]["route"] == [0,10,16,14,9,0]
+        assert solution["vehicles"][0]["route"] == [0, 10, 16, 14, 9, 0]
 
     def test_solver_fail(self, problem):
-        problem['max_distance'] = 10
+        problem["max_distance"] = 10
         distance_matrix = solver.create_distance_matrix(problem["coordinates"])
         solution = solver.solve(
-        distance_matrix=distance_matrix,
-        num_vehicles=problem["num_vehicles"],
-        depot=problem["depot"],
-        max_distance=problem["max_distance"],
-    )
+            distance_matrix=distance_matrix,
+            num_vehicles=problem["num_vehicles"],
+            depot=problem["depot"],
+            max_distance=problem["max_distance"],
+        )
         assert solution["objective"] == "Solution not found"
-

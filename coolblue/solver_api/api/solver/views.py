@@ -1,8 +1,8 @@
 """Solver views"""
 import logging
 import uuid
-from drf_spectacular.utils import extend_schema
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication)
@@ -12,11 +12,11 @@ from rest_framework.viewsets import ViewSet
 
 from ...celery_app import app as celery_app
 from ...solver.tasks import task_solve_problem
-
-
-from .serializers import ProblemResponseSerializer, ProblemSerializer, SolutionSerializer
+from .serializers import (ProblemResponseSerializer, ProblemSerializer,
+                          SolutionSerializer)
 
 logger = logging.getLogger(__name__)
+
 
 @extend_schema(request=ProblemSerializer, responses=ProblemResponseSerializer)
 class SolverViewset(ViewSet):
@@ -32,11 +32,13 @@ class SolverViewset(ViewSet):
             data = serializer.validated_data
             # user id added to task id to separate results
             task_id = str(uuid.uuid4())
+            # Run task and return id
             task_solve_problem.apply_async(
-                kwargs={"user_id": request.user.id, "data": data}, queue="vrp_solver",
-                task_id=":".join((str(request.user.id), task_id))
+                kwargs={"user_id": request.user.id, "data": data},
+                queue="vrp_solver",
+                task_id=":".join((str(request.user.id), task_id)),
             )
-            return Response(status=201, data={'task_id': task_id})
+            return Response(status=201, data={"task_id": task_id})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -44,11 +46,14 @@ class SolverViewset(ViewSet):
     def retrieve(self, request, pk=None):
         """Retrieves task result by id"""
         task_result = celery_app.AsyncResult(id=":".join((str(request.user.id), pk)))
+        # If task is ready, get result, remove it from result backend and return
         if task_result.ready():
             result = task_result.get()
             task_result.forget()
             if result:
-                return Response(data=result)
+                return Response(
+                    data=result, headers={"Content-Type": "application/json"}
+                )
+            # Return Gone if task was already picked
             return Response(status=410)
-
         return Response(status=400)

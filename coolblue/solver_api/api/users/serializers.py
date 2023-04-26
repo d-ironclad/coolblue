@@ -8,6 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         """Model related params"""
+
         model = get_user_model()
         fields = ("id", "username", "password", "email")
         extra_kwargs = {

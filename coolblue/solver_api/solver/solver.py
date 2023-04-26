@@ -4,6 +4,7 @@
     https://developers.google.com/optimization/routing/vrp
 """
 import logging
+import time
 
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 
@@ -22,9 +23,9 @@ def create_distance_matrix(coordinates):
 
 def format_solution(solution, num_vehicles, routing, manager):
     """Returns solution as dict"""
-    result = {"objective": solution.ObjectiveValue(), 'vehicles': {}}
+    result = {"objective": solution.ObjectiveValue(), "vehicles": {}}
     for vehicle_id in range(num_vehicles):
-        route = result['vehicles'].setdefault(vehicle_id, {"route": [], "distance": 0})
+        route = result["vehicles"].setdefault(vehicle_id, {"route": [], "distance": 0})
         index = routing.Start(vehicle_id)
         while not routing.IsEnd(index):
             route["route"].append(manager.IndexToNode(index))
@@ -41,8 +42,13 @@ def solve(
     distance_matrix: list, max_distance: int, num_vehicles: int = 1, depot: int = 0
 ):
     """Returns Vehicle Routing Problem solution"""
+    start_time = time.time()
+
+    matrix_len = len(distance_matrix)
+    logger.info(f"VRP solution for {num_vehicles} vehicles and {matrix_len} waypoints")
+
     # Create the routing index manager.
-    manager = pywrapcp.RoutingIndexManager(len(distance_matrix), num_vehicles, depot)
+    manager = pywrapcp.RoutingIndexManager(matrix_len, num_vehicles, depot)
 
     # Create Routing Model.
     routing = pywrapcp.RoutingModel(manager)
@@ -80,7 +86,7 @@ def solve(
 
     # Solve the problem.
     solution = routing.SolveWithParameters(search_parameters)
-
+    logger.info(f"elapsed time: {time.time() - start_time}")
 
     if solution:
         return format_solution(solution, num_vehicles, routing, manager)
