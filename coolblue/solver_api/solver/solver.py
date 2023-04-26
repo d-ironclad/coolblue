@@ -15,10 +15,8 @@ logger = logging.getLogger(__name__)
 def create_distance_matrix(coordinates):
     """Creates distance matrix from list of coordinates"""
     data = []
-    # TODO actual distance
     for point in coordinates:
         data.append([calculate_distance(point, x) for x in coordinates])
-    logger.info(data)
     return data
 
 
@@ -83,4 +81,8 @@ def solve(
     # Solve the problem.
     solution = routing.SolveWithParameters(search_parameters)
 
-    return format_solution(solution, num_vehicles, routing, manager)
+
+    if solution:
+        return format_solution(solution, num_vehicles, routing, manager)
+
+    return {"objective": "Solution not found"}

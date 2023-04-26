@@ -47,5 +47,8 @@ class SolverViewset(ViewSet):
         if task_result.ready():
             result = task_result.get()
             task_result.forget()
-            return Response(result)
+            if result:
+                return Response(data=result)
+            return Response(status=410)
+
         return Response(status=400)
