@@ -53,4 +53,4 @@ This is Django+DRF app, which receives problem parameters, sends them to RabbitM
 
 ## Notes
 
-Generating autodocs for DRF is still kinda painful makes me miss Pydantic schemas.
+Generating autodocs for DRF is still kinda painful and makes me miss Pydantic schemas.
