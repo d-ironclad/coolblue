@@ -12,7 +12,7 @@ Application will run at http://localhost:8000/
 
 API documentation available at http://localhost:8000/api/schema/swagger-ui
 
-Problem example for _/api/solve_
+Problem example for POST _/api/solve/_
 ```json
 {
     "coordinates": [
