@@ -12,6 +12,11 @@ Application will run at http://localhost:8000/
 
 API documentation available at http://localhost:8000/api/schema/swagger-ui
 
+Problem example for _/api/solve_
+```json
+./example.sh
+```
+
 ## Design
 
 This is Django+DRF app, which receives problem parameters, sends them to RabbitMQ, where messages acknowleged by Celery worker(s), which run solver. Solution stored in Redis until request from author (or expiration).
