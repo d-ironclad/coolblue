@@ -5,10 +5,11 @@ Docker compose and Linux/Mac (last one with enabled virtualization), was tested 
 ## How to run
 
 ```bash
-./example.sh`
+./example.sh
 ```
 
 Application will run at http://localhost:8000/
+
 API documentation available at http://localhost:8000/api/schema/swagger-ui
 
 ## Design
